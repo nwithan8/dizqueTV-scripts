@@ -1,3 +1,8 @@
+"""
+Copy all items from a Plex playlist to an existing dizqueTV channel.
+Refreshes the channel (removes all existing programs, re-adds new items)
+"""
+
 from typing import List, Union
 
 from plexapi import server, playlist

@@ -1,3 +1,9 @@
+"""
+Copy all items from a dizqueTV channel to a Plex playlist.
+Resets an existing playlist, or creates a new one.
+Playlist will be named the same as the dizqueTV channel.
+"""
+
 from typing import List, Union
 
 from plexapi import server, media, library, playlist, myplex
