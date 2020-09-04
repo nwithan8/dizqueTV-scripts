@@ -38,13 +38,16 @@ plex = Plex(url=PLEX_URL, token=PLEX_TOKEN)
 plex_playlist = plex.get_playlist(playlist_name=PLAYLIST_NAME)
 channel = dtv.get_channel(channel_number=DIZQUETV_CHANNEL_NUMBER)
 to_add = []
-if plex_playlist:
-    for item in plex_playlist.items():
-        item = dtv.convert_plex_item_to_program(plex_item=item, plex_server=plex.server)
-        if item:
-            print(f"Adding {item.title}...")
-            to_add.append(item)
-    if channel.delete_all_programs():
-        dtv.add_programs_to_channels(programs=to_add, channels=[channel])
+if channel:
+    if plex_playlist:
+        for item in plex_playlist.items():
+            item = dtv.convert_plex_item_to_program(plex_item=item, plex_server=plex.server)
+            if item:
+                print(f"Adding {item.title}...")
+                to_add.append(item)
+        if channel.delete_all_programs():
+            dtv.add_programs_to_channels(programs=to_add, channels=[channel])
+    else:
+        print(f"Could not find {PLAYLIST_NAME} playlist.")
 else:
-    print(f"Could not find {PLAYLIST_NAME} playlist.")
+    print(f"Could not find channel #{DIZQUETV_CHANNEL_NUMBER}")
