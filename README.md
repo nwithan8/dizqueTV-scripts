@@ -14,4 +14,4 @@ All scripts are standalone, meaning (as long as dependencies are installed), any
 # Script descriptions
 - ``channel_to_playlist.py``: Copy all items from a dizqueTV channel to a Plex playlist (make a new playlist if one doesn't exist).
 - ``playlist_to_channel.py``: Copy all items from a Plex playlist to an existing dizqueTV channel.
-- ``studio_channel``: Make a new channel with all content from a specific movie studio, TV network or streaming platform.
+- ``studio_channel.py``: Make a new channel with all content from a specific movie studio, TV network or streaming platform.
