@@ -4,17 +4,21 @@ Refreshes the channel (removes all existing programs, re-adds new items)
 """
 
 from typing import List, Union
+import argparse
 
 from plexapi import server, playlist
 from dizqueTV import API
 
 # COMPLETE THESE SETTINGS
 DIZQUETV_URL = "http://localhost:8000"
-DIZQUETV_CHANNEL_NUMBER = 1
 
 PLEX_URL = "http://localhost:32400"
 PLEX_TOKEN = "thisisaplextoken"
-PLAYLIST_NAME = "mysmartplaylist"
+
+parser = argparse.ArgumentParser()
+parser.add_argument('playlist_name', type=str, help="Name of Plex playlist to convert to a channel")
+parser.add_argument('channel_number', type=int, help="DizqueTV channel to add playlist to.")
+args = parser.parse_args()
 
 
 class Plex:
@@ -35,8 +39,8 @@ class Plex:
 
 dtv = API(url=DIZQUETV_URL)
 plex = Plex(url=PLEX_URL, token=PLEX_TOKEN)
-plex_playlist = plex.get_playlist(playlist_name=PLAYLIST_NAME)
-channel = dtv.get_channel(channel_number=DIZQUETV_CHANNEL_NUMBER)
+plex_playlist = plex.get_playlist(playlist_name=args.playlist_name)
+channel = dtv.get_channel(channel_number=args.channel_number)
 to_add = []
 if channel:
     if plex_playlist:
@@ -48,6 +52,6 @@ if channel:
         if channel.delete_all_programs():
             dtv.add_programs_to_channels(programs=to_add, channels=[channel])
     else:
-        print(f"Could not find {PLAYLIST_NAME} playlist.")
+        print(f"Could not find {args.playlist_name} playlist.")
 else:
-    print(f"Could not find channel #{DIZQUETV_CHANNEL_NUMBER}")
+    print(f"Could not find channel #{args.channel_number}")

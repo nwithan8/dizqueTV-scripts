@@ -5,17 +5,22 @@ Playlist will be named the same as the dizqueTV channel.
 """
 
 from typing import List, Union
+import argparse
 
 from plexapi import server, media, library, playlist, myplex
 from dizqueTV import API
 
 # COMPLETE THESE SETTINGS
 DIZQUETV_URL = "http://localhost:8000"
-DIZQUETV_CHANNEL_NUMBER = 1
 # Plex playlist will have the same name as the dizqueTV channel
 
 PLEX_URL = "http://localhost:32400"
 PLEX_TOKEN = "thisisaplextoken"
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('channel_number', type=int, help="DizqueTV channel to add playlist to.")
+args = parser.parse_args()
 
 
 class Plex:
@@ -70,7 +75,7 @@ class Plex:
 
 dtv = API(url=DIZQUETV_URL)
 plex = Plex(url=PLEX_URL, token=PLEX_TOKEN)
-channel = dtv.get_channel(channel_number=DIZQUETV_CHANNEL_NUMBER)
+channel = dtv.get_channel(channel_number=args.channel_number)
 to_add = []
 for program in channel.programs:
     plex_item = plex.get_plex_item(item=program)
