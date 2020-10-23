@@ -10,7 +10,7 @@ from plexapi import server, playlist
 from dizqueTV import API
 
 # COMPLETE THESE SETTINGS
-DIZQUETV_URL = "http://192.168.1.27:8000"
+DIZQUETV_URL = "http://localhost:8000"
 
 parser = argparse.ArgumentParser()
 parser.add_argument('numbers',
