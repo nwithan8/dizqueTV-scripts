@@ -102,6 +102,9 @@ def create_time_slots(channel: Channel):
                 if not shows:
                     print(f"Could not get any episodes to select for {start_time}.")
                 else:
+                    # This really isn't needed to grab a random episode.
+                    # All dizqueTV is going to see is the show title, and it will pick a random episode on its end.
+                    # Could just say program = selected_show_episodes[0] and be done with it.
                     selected_show_episodes = helpers.random_choice(items=shows)
                     print(f"Getting random episode of {selected_show_episodes[0].showTitle}...")
                     program = helpers.random_choice(items=selected_show_episodes)
@@ -135,7 +138,7 @@ if not channel:
 if channel.schedule:
     channel.delete_schedule()
 time_slots = create_time_slots(channel=channel)
-if channel.add_schedule(time_slots=time_slots):
+if channel.add_schedule(time_slots=time_slots, slots=[]):
     print(f"Created schedule for {channel.name}.")
 else:
     print(f"Could not create schedule for {channel.name}.")
