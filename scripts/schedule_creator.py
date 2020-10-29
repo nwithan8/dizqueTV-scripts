@@ -10,7 +10,7 @@ Entry example:
     'order': 'shuffle'
 }
 
-Time is HHMM in 24-hour time
+Time is HH:MM in 24-hour time
 
 Each entry must have a 'type' of either 'movie' or 'show'
 
@@ -33,16 +33,16 @@ DIZQUETV_URL = "http://localhost:8000"
 CHANNEL_NUMBER = 1
 
 SCHEDULE = {  # use 24-hour time
-    "0000": {
+    "00:00": {
         'type': 'show',
         'title': ['The Simpsons', 'Family Guy'],
         'order': 'shuffle'
     },
-    "0030": {
+    "00:30": {
         'type': 'movie',
         'title': ['The Grinch', 'Halloween']
     },
-    "0330": {
+    "03:30": {
         'type': 'movie',
     }
 }
