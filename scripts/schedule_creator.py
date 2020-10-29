@@ -62,6 +62,8 @@ def get_non(item_type: str, program_list):
 
 def get_random_item_of_type(media_type: str, program_list):
     filtered_program_list = get_items_of_type(item_type=media_type, program_list=program_list)
+    if not filtered_program_list:
+        return None
     return helpers.random_choice(items=filtered_program_list)
 
 
