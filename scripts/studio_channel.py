@@ -22,23 +22,35 @@ PLEX_TOKEN = "thisisaplextoken"
 #
 
 parser = argparse.ArgumentParser()
-parser.add_argument("studio", type=str, help="name of studio, network or platform to find items from")
+parser.add_argument('studio',
+                    nargs="+",
+                    type=str,
+                    help="name of studios, networks or platforms to find items from")
 parser.add_argument("-s", "--shuffle", action="store_true", help="Shuffle items once channel is completed.")
 parser.add_argument("-v", "--verbose", action="store_true", help="Verbose (for debugging)")
 args = parser.parse_args()
 
+channel_name = ", ".join(name for name in args.studio)
+
 plex_server = server.PlexServer(PLEX_URL, PLEX_TOKEN)
-items = plex_server.library.search(studio=f"{quote(args.studio)}")
-if items:
-    print("Matching items:")
-    for item in items:
-        print(f"{item.studio} - {item.title}")
+
+all_items = []
+for studio in args.studio:
+    print(f"Looking up content from {studio}...")
+    studio_items = plex_server.library.search(studio=f"{quote(studio)}")
+    if studio_items:
+        print("Matching items:")
+        for item in studio_items:
+            print(f"{item.studio} - {item.title}")
+        all_items.extend(studio_items)
+
+if all_items:
     answer = input("Would you like to proceed with making the channel? (Y/N) ")
     if type(answer) == str and answer.lower().startswith('y'):
         dtv = API(url=DIZQUETV_URL, verbose=args.verbose)
         new_channel_number = max(dtv.channel_numbers) + 1
         final_programs = []
-        for item in items:
+        for item in all_items:
             if item.type == 'movie':
                 final_programs.append(item)
             elif item.type == 'show':
@@ -50,15 +62,15 @@ if items:
         new_channel = dtv.add_channel(programs=final_programs,
                                       plex_server=plex_server,
                                       number=new_channel_number,
-                                      name=f"{args.studio}",
+                                      name=f"{channel_name}",
                                       handle_errors=True)
         if new_channel:
-            print(f"Channel {new_channel_number} '{args.studio}' successfully created.")
+            print(f"Channel {new_channel_number} '{channel_name}' successfully created.")
             if args.shuffle:
                 new_channel.sort_programs_randomly()
         else:
-            print("Something went wrong.")
+             print("Something went wrong.")
     else:
-        exit(0)
+            exit(0)
 else:
-    print(f"Could not find any media items from {args.studio}")
+    print(f"Could not find any media items from studio(s)")
