@@ -87,7 +87,6 @@ if plex_playlist:
         dtv.add_programs_to_channels(programs=to_add,
                                      channels=[channel])
         if args.shuffle:
-            if args.shuffle:
-                channel.sort_programs_randomly()
+            channel.sort_programs_randomly()
 else:
     print(f"Could not find {args.playlist_name} playlist.")
