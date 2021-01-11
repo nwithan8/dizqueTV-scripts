@@ -44,6 +44,9 @@ parser.add_argument("-N", '--channel_name',
 parser.add_argument("-c", '--channel_number',
                     nargs='?', type=int,
                     default=None, help="DizqueTV channel to add playlist to.")
+parser.add_argument("-t", '--token',
+                    nargs='?', type=str,
+                    default=None, help="Override the script's plex token.")
 parser.add_argument("-x", "--shuffle",
                     action="store_true",
                     help="Shuffle items once channel is completed.")
@@ -53,6 +56,9 @@ parser.add_argument("-v", "--verbose",
 args = parser.parse_args()
 
 #channel_name = ", ".join(name for name in args.studio)
+
+if args.token is not None and len(args.token) > 0:
+    PLEX_TOKEN = args.token
 
 plex_server = server.PlexServer(PLEX_URL, PLEX_TOKEN)
 
@@ -87,7 +93,7 @@ for section in args.section:
             if found_coll and len(found_coll) == 1:
                 print("Matching COLLECTION items:")
                 for item in found_coll[0].children:
-                    print(f"{collection_parm} - {item.title}")
+                    print(f"{collection} - {item.title}")
                 all_items.extend(found_coll[0].children)
 
 if all_items:
