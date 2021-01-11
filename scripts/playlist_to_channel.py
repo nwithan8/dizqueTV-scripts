@@ -19,11 +19,20 @@ parser = argparse.ArgumentParser()
 parser.add_argument('playlist_name',
                     type=str,
                     help="Name of Plex playlist to convert to a channel")
-parser.add_argument('-c', '--channel_number',
+parser.add_argument('-c',
+                    '--channel_number',
                     nargs='?',
                     type=int,
                     default=None,
                     help="DizqueTV channel to add playlist to.")
+parser.add_argument("-s",
+                    "--shuffle",
+                    action="store_true",
+                    help="Shuffle items once channel is completed.")
+parser.add_argument("-v",
+                    "--verbose",
+                    action="store_true",
+                    help="Verbose (for debugging)")
 args = parser.parse_args()
 
 
@@ -43,7 +52,7 @@ class Plex:
         return None
 
 
-dtv = API(url=DIZQUETV_URL)
+dtv = API(url=DIZQUETV_URL, verbose=args.verbose)
 plex = Plex(url=PLEX_URL,
             token=PLEX_TOKEN)
 plex_playlist = plex.get_playlist(playlist_name=args.playlist_name)
@@ -77,5 +86,8 @@ if plex_playlist:
     if channel.delete_all_programs():
         dtv.add_programs_to_channels(programs=to_add,
                                      channels=[channel])
+        if args.shuffle:
+            if args.shuffle:
+                channel.sort_programs_randomly()
 else:
     print(f"Could not find {args.playlist_name} playlist.")
