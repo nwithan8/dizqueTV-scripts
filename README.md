@@ -12,6 +12,7 @@ All scripts are standalone, meaning (as long as dependencies are installed), any
 
 
 # Script descriptions
+- ``channel_builder.py``: Search for Plex items in multiple ways, and add the result to a dizqueTV channel.
 - ``channel_to_playlist.py``: Copy all items from a dizqueTV channel to a Plex playlist (make a new playlist if one doesn't exist).
 - ``playlist_to_channel.py``: Copy all items from a Plex playlist to an existing dizqueTV channel.
 - ``make_blank_channels.py``: Create multiple "blank" channels on dizqueTV.
