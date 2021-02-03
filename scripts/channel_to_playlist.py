@@ -68,7 +68,7 @@ class Plex:
         else:
             results = self.server.library.search(title=item.title)
         for media in results:
-            if int(media.ratingKey) == int(item.ratingKey):
+            if media.ratingKey and int(media.ratingKey) == int(item.ratingKey):
                 return media
         return None
 
