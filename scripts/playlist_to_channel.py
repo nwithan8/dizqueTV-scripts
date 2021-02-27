@@ -71,7 +71,8 @@ else:
         new_channel_number = 1
 to_add = []
 if plex_playlist:
-    for item in plex_playlist.items():
+    plex_playlist_items = plex_playlist.items() # preload to avoid connection closed while looping
+    for item in plex_playlist_items:
         item = dtv.convert_plex_item_to_program(plex_item=item,
                                                 plex_server=plex.server)
         if item:
