@@ -161,6 +161,6 @@ for trakt_show in trending_shows:
 
 if this_channel.delete_all_programs():
     if this_channel.add_programs(programs=episodes_to_add):
-        print("Complete!")
         if args.shuffle:
             this_channel.sort_programs_randomly()
+        print("Complete!")
