@@ -37,6 +37,10 @@ parser.add_argument('--newest',
                     default=False,
                     action="store_true",
                     help="Only add the latest season.")
+parser.add_argument("-s",
+                    "--shuffle",
+                    action="store_true",
+                    help="Shuffle items once channel is completed.")
 args = parser.parse_args()
 
 class TraktConnection:
@@ -158,3 +162,5 @@ for trakt_show in trending_shows:
 if this_channel.delete_all_programs():
     if this_channel.add_programs(programs=episodes_to_add):
         print("Complete!")
+        if args.shuffle:
+            this_channel.sort_programs_randomly()
