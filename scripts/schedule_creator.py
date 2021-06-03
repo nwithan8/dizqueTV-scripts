@@ -21,10 +21,9 @@ If multiple titles are provided, one of the listed titles will be selected rando
 'order' can be 'shuffle', 'next' or missing. 'shuffle' used by default behind-the-scenes
 """
 from typing import List, Union
-import argparse
 
 from dizqueTV import API, make_time_slot_from_dizque_program
-from dizqueTV.channels import Channel
+from dizqueTV.models.channels import Channel
 import dizqueTV.helpers as helpers
 
 
@@ -52,12 +51,12 @@ SCHEDULE = {  # use 24-hour time
 
 def get_items_of_type(item_type: str, program_list):
     return [item for item in program_list if
-            (helpers._object_has_attribute(object=item, attribute_name='type') and item.type == item_type)]
+            (helpers._object_has_attribute(obj=item, attribute_name='type') and item.type == item_type)]
 
 
 def get_non(item_type: str, program_list):
     return [item for item in program_list if
-            (helpers._object_has_attribute(object=item, attribute_name='type') and item.type != item_type)]
+            (helpers._object_has_attribute(obj=item, attribute_name='type') and item.type != item_type)]
 
 
 def get_random_item_of_type(media_type: str, program_list):
