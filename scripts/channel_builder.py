@@ -33,7 +33,7 @@ parser.add_argument("-G", '--genre',
                     nargs="*", type=str,
                     help="name of genre to find items from")
 parser.add_argument("-C", '--collection',
-                    nargs = "*", type=str,
+                    nargs="*", type=str,
                     help="name of collection to find items from")
 parser.add_argument("-s", '--section',
                     nargs="+", type=str, required=True,
@@ -55,7 +55,7 @@ parser.add_argument("-v", "--verbose",
                     help="Verbose (for debugging)")
 args = parser.parse_args()
 
-#channel_name = ", ".join(name for name in args.studio)
+# channel_name = ", ".join(name for name in args.studio)
 
 if args.token is not None and len(args.token) > 0:
     PLEX_TOKEN = args.token
@@ -122,8 +122,8 @@ if all_items:
             if args.shuffle:
                 new_channel.sort_programs_randomly()
         else:
-             print("Something went wrong.")
+            print("Something went wrong.")
     else:
-            exit(0)
+        exit(0)
 else:
     print(f"Could not find any media items from given arguments. Exiting.")

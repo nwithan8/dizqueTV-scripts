@@ -1,2 +1,2 @@
-plexapi
 dizqueTV
+progress
