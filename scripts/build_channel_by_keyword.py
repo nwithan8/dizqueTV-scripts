@@ -20,8 +20,8 @@ PLEX_TOKEN = "thisisaplextoken"
 
 # DO NOT EDIT BELOW THIS LINE
 parser = argparse.ArgumentParser()
-parser.add_argument("keyword", nargs="*", type=str, required=True, help="Keyword to search for in Plex")
-parser.add_argument("-s", '--section',  nargs="+", type=str, required=True, help="Plex media section(s) to use")
+parser.add_argument("keyword", type=str, help="Keyword to search for in Plex")
+parser.add_argument("-s", '--sections',  nargs="+", type=str, required=True, help="Plex media section(s) to use")
 parser.add_argument("-N", '--channel_name', nargs="?", type=str, help="name of DizqueTV channel to create")
 parser.add_argument("-c", '--channel_number', nargs='?', type=int, default=None, help="DizqueTV channel to add playlist to.")
 parser.add_argument("-t", '--token', nargs='?', type=str, default=None, help="Override the script's plex token.")
@@ -35,7 +35,7 @@ if args.token is not None and len(args.token) > 0:
 plex_server = server.PlexServer(PLEX_URL, PLEX_TOKEN)
 
 matching_items = []
-for section in args.section:
+for section in args.sections:
     print(f'Searching for items with "{args.keyword}" in {section}..')
     matching_items.extend(plex_server.library.section(section).search(summary__icontains=args.keyword))
 
