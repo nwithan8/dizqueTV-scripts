@@ -20,7 +20,7 @@ PLEX_TOKEN = "thisisaplextoken"
 
 # DO NOT EDIT BELOW THIS LINE
 parser = argparse.ArgumentParser()
-parser.add_argument("keyword", type=str, help="Keyword to search for in Plex")
+parser.add_argument("keywords", nargs="*", type=str, help="Keyword to search for in Plex")
 parser.add_argument("-s", '--sections',  nargs="+", type=str, required=True, help="Plex media section(s) to use")
 parser.add_argument("-N", '--channel_name', nargs="?", type=str, help="name of DizqueTV channel to create")
 parser.add_argument("-c", '--channel_number', nargs='?', type=int, default=None, help="DizqueTV channel to add playlist to.")
@@ -36,12 +36,15 @@ plex_server = server.PlexServer(PLEX_URL, PLEX_TOKEN)
 
 matching_items = []
 for section in args.sections:
-    print(f'Searching for items with "{args.keyword}" in {section}..')
-    matching_items.extend(plex_server.library.section(section).search(summary__icontains=args.keyword))
+    for keyword in args.keywords:
+        print(f'Searching for items with "{keyword}" in "{section}"...')
+        matching_items.extend(plex_server.library.section(section).search(summary__icontains=keyword))
 
 if not matching_items:
     print("No matching items found.")
     exit(0)
+
+matching_items = list(set(matching_items))  # remove duplicate items
 
 answer = input(f"Found {len(matching_items)} matching items. Proceed with making this channel? [y/n] ")
 if type(answer) != str or not answer.lower().startswith('y'):
