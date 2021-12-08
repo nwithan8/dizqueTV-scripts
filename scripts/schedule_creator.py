@@ -21,31 +21,37 @@ If multiple titles are provided, one of the listed titles will be selected rando
 'order' can be 'shuffle', 'next' or missing. 'shuffle' used by default behind-the-scenes
 """
 from typing import List, Union
+import argparse
 
 from dizqueTV import API, make_time_slot_from_dizque_program
-from dizqueTV.models.channels import Channel
+from dizqueTV.models.channels import Channel, TimeSlot, TimeSlotItem
 import dizqueTV.helpers as helpers
 
 
 # COMPLETE THESE SETTINGS
 DIZQUETV_URL = "http://localhost:8000"
-CHANNEL_NUMBER = 1
 
 SCHEDULE = {  # use 24-hour time
-    "00:00": {
-        'type': 'show',
-        'title': ['The Simpsons', 'Family Guy'],
-        'order': 'shuffle'
-    },
-    "00:30": {
-        'type': 'movie',
-        'title': ['The Grinch', 'Halloween']
-    },
-    "03:30": {
-        'type': 'movie',
+    "21:15": {
+        "type": "movie",
     }
 }
 
+###
+parser = argparse.ArgumentParser()
+parser.add_argument('-c',
+                    '--channel_number',
+                    nargs='?',
+                    type=int,
+                    default=None,
+                    help="DizqueTV channel to add playlist to.")
+args = parser.parse_args()
+
+if args.channel_number:
+    CHANNEL_NUMBER = args.channel_number
+    if not CHANNEL_NUMBER:
+        print(f"Could not find channel #{args.channel_number}")
+        exit(1)
 
 # DO NOT TOUCH BELOW
 
@@ -122,10 +128,12 @@ def create_time_slots(channel: Channel):
             print(f"Could not get a program to schedule for {start_time}.")
         else:
             print(f"Scheduling {program.showTitle} for {start_time}...")
-            time_slots.append(
-                make_time_slot_from_dizque_program(program=program,
-                                                   time=start_time,
-                                                   order=data.get('order', 'shuffle')))
+            item = TimeSlotItem(item_type='movie', item_value=program.showTitle)
+            slotData = {'time': helpers.convert_24_time_to_milliseconds_past_midnight(time_string=start_time),
+                    'showId': "movie.",
+                    'order': data.get('order', 'shuffle')}
+            timeSlot = TimeSlot(data=slotData, program=item)
+            time_slots.append(timeSlot)
     return time_slots
 
 
@@ -136,7 +144,9 @@ if not channel:
 
 if channel.schedule:
     channel.delete_schedule()
+
 time_slots = create_time_slots(channel=channel)
+
 if channel.add_schedule(time_slots=time_slots, slots=[]):
     print(f"Created schedule for {channel.name}.")
 else:
