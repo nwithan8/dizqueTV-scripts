@@ -90,11 +90,14 @@ for section in args.section:
     if args.collection is not None:
         for collection in args.collection:
             found_coll = plex_server.library.section(section).search(title=collection, libtype='collection')
-            if found_coll and len(found_coll) == 1:
-                print("Matching COLLECTION items:")
-                for item in found_coll[0].children:
-                    print(f"{collection} - {item.title}")
-                all_items.extend(found_coll[0].children)
+            if found_coll and len(found_coll) > 0:
+                for coll in found_coll:
+                    if coll.title == collection:
+                        print("Matching COLLECTION items:")
+                        for item in coll.children:
+                            print(f"{collection} - {item.title}")
+                        all_items.extend(found_coll[0].children)
+                        break
 
 if all_items:
     answer = input("Would you like to proceed with making the channel? (Y/N) ")
