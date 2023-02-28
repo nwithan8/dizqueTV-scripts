@@ -17,6 +17,7 @@ Use `python <script_name> --help` to see the script's help message.
 - [`collection_to_channel.py`](scripts/basic/collection_to_channel.py): Copy all items from a Plex collection to an existing dizqueTV channel.
 - [`make_blank_channels.py`](scripts/utilities/make_blank_channels.py): Create multiple "blank" channels on dizqueTV.
 - [`delete_channels.py`](scripts/utilities/delete_channels.py): Delete multiple channels on dizqueTV.
+- [`find_broken_links.py`](scripts/utilities/find_broken_links.py): Find broken media links in dizqueTV channels (content path that has changed or no longer exists).
 - [`replace_old_url.py`](scripts/utilities/replace_old_url.py): Replace old URLs in dizqueTV channels with new URLs.
 - [`trending_shows.py`](scripts/trending/trending_shows.py): Search for and add the top 10 trending shows (via Trakt) to a dizqueTV channel.
 - [`trending_movies.py`](scripts/trending/trending_movies.py): Search for and add the top 10 trending movies (via Trakt) to a dizqueTV channel.

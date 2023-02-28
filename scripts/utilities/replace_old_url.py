@@ -23,11 +23,9 @@ IMPORTANT:
     That's what this script will fix.
 """
 
-from typing import List, Union
 import argparse
 from progress.bar import Bar
 
-from plexapi import server, playlist
 from dizqueTV import API
 
 # COMPLETE THESE SETTINGS
