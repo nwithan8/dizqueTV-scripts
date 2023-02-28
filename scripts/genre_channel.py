@@ -20,14 +20,15 @@ def get_items(args) -> list:
     :return: List of Plex items
     """
     items = []
-    for studio in args.studio:
-        print(f"Looking up content from {studio}...")
-        studio_items = plex_server.library.search(studio=f"{quote(studio)}")
-        if studio_items:
-            print("Matching items:")
-            for item in studio_items:
-                print(f"{item.studio} - {item.title}")
-            items.extend(studio_items)
+    for section in args.libraries:
+        for genre in args.genres:
+            print(f"Looking up content in {section} in the {genre} genre...")
+            genre_items = plex_server.library.section(section).search(genre=f"{quote(genre)}")
+            if genre_items:
+                print("Matching GENRE items:")
+                for item in genre_items:
+                    print(f"{genre} - {item.title}")
+                items.extend(genre_items)
     return items
 
 
@@ -37,15 +38,15 @@ def get_channel_name(args) -> str:
     Get the name of the channel to create.
     :return: Channel name
     """
-    return args.channel_name or ", ".join(name for name in args.studio)
+    return args.channel_name or ", ".join(name for name in args.genres)
 
 
 # Add any additional arguments you need
 parser = argparse.ArgumentParser()
-parser.add_argument('studio',
+parser.add_argument('genres',
                     nargs="+",
                     type=str,
-                    help="name of studios, networks or platforms to find items from")
+                    help="genres to find items from")
 
 # DO NOT EDIT BELOW THIS LINE
 parser.add_argument('-d', '--dizquetv_url', type=str, required=True, help="URL of dizqueTV server")

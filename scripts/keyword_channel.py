@@ -11,49 +11,67 @@ from dizqueTV import API
 import argparse
 from progress.bar import Bar
 
-# COMPLETE THESE SETTINGS
-DIZQUETV_URL = "http://localhost:8000"
 
-PLEX_URL = "http://localhost:32400"
-PLEX_TOKEN = "thisisaplextoken"
+# Complete this function
+def get_items(args) -> list:
+    """
+    Get all items matching the given parameters.
+    :return: List of Plex items
+    """
+    items = []
+    for section in args.sections:
+        for keyword in args.keywords:
+            print(f'Searching for items with "{keyword}" in "{section}"...')
+            items.extend(plex_server.library.section(section).search(summary__icontains=keyword))
+    return items
 
 
-# DO NOT EDIT BELOW THIS LINE
+# Complete this function
+def get_channel_name(args) -> str:
+    """
+    Get the name of the channel to create.
+    :return: Channel name
+    """
+    return args.channel_name or ", ".join(args.keywords)
+
+
+# Add any additional arguments you need
 parser = argparse.ArgumentParser()
 parser.add_argument("keywords", nargs="*", type=str, help="Keyword to search for in Plex")
+
+# DO NOT EDIT BELOW THIS LINE
+parser.add_argument('-d', '--dizquetv_url', type=str, required=True, help="URL of dizqueTV server")
+parser.add_argument('-p', '--plex_url', type=str, required=True, help="URL of Plex server")
+parser.add_argument("-t", '--plex_token', type=str, required=True, help="Plex server token")
 parser.add_argument("-s", '--sections', nargs="+", type=str, required=True, help="Plex media section(s) to use")
-parser.add_argument("-N", '--channel_name', nargs="?", type=str, help="name of DizqueTV channel to create")
+parser.add_argument("-n", '--channel_name', nargs="?", type=str, help="name of dizqueTV channel to create")
 parser.add_argument("-c", '--channel_number', nargs='?', type=int, default=None,
-                    help="DizqueTV channel to add playlist to.")
-parser.add_argument("-t", '--token', nargs='?', type=str, default=None, help="Override the script's plex token.")
+                    help="dizqueTV channel to add playlist to.")
 parser.add_argument("-x", "--shuffle", action="store_true", help="Shuffle items once channel is completed.")
 parser.add_argument("-v", "--verbose", action="store_true", help="Verbose (for debugging)")
 args = parser.parse_args()
 
-if args.token is not None and len(args.token) > 0:
-    PLEX_TOKEN = args.token
+dtv = API(url=args.dizquetv_url, verbose=args.verbose)
 
-plex_server = server.PlexServer(PLEX_URL, PLEX_TOKEN)
+plex_server = server.PlexServer(args.plex_url, args.plex_token)
 
-matching_items = []
-for section in args.sections:
-    for keyword in args.keywords:
-        print(f'Searching for items with "{keyword}" in "{section}"...')
-        matching_items.extend(plex_server.library.section(section).search(summary__icontains=keyword))
-
+# Get all items matching the given parameters
+matching_items = get_items(args)
 if not matching_items:
     print("No matching items found.")
     exit(0)
 
+# Clean up the list of items
 matching_items = list(set(matching_items))  # remove duplicate items
 
+# Verify that the user wants to proceed
 answer = input(f"Found {len(matching_items)} matching items. Proceed with making this channel? [y/n] ")
 if type(answer) != str or not answer.lower().startswith('y'):
     exit(0)
 
-dtv = API(url=DIZQUETV_URL, verbose=args.verbose)
+# Copy the items to a dizqueTV channel
 new_channel_number = args.channel_number
-channel_name = args.channel_name
+channel_name = get_channel_name(args)
 final_programs = []
 for item in matching_items:
     if item.type == 'movie':
@@ -81,6 +99,7 @@ if not channel:
 
 print(f"Channel {new_channel_number} '{channel_name}' successfully updated.")
 
+# Shuffle the channel if requested
 if args.shuffle:
     print("Shuffling channel items...")
     channel.sort_programs_randomly()
