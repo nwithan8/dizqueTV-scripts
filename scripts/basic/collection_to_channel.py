@@ -27,7 +27,7 @@ parser.add_argument('-c',
                     nargs='?',
                     type=int,
                     default=None,
-                    help="DizqueTV channel to add playlist to.")
+                    help="dizqueTV channel to add playlist to.")
 parser.add_argument("-s",
                     "--shuffle",
                     action="store_true",

@@ -19,7 +19,7 @@ PLEX_TOKEN = "thisisaplextoken"
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('channel_number', type=int, help="DizqueTV channel to add playlist to.")
+parser.add_argument('channel_number', type=int, help="dizqueTV channel to add playlist to.")
 args = parser.parse_args()
 
 

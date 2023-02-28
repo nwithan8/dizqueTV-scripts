@@ -1,5 +1,5 @@
 """
-Add the top 10 trending shows to a channel on dizqueTV
+Add the top 10 trending movies to a channel on dizqueTV
 Refreshes the channel (removes all existing programs, re-adds new items)
 """
 
@@ -26,21 +26,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-n',
                     '--channel_name',
                     type=str,
-                    default="Trending Shows",
+                    default="Trending Movies",
                     help="Name of channel to create/edit")
 parser.add_argument('-c', '--channel_number',
                     nargs='?',
                     type=int,
                     default=None,
-                    help="DizqueTV channel to add playlist to.")
-parser.add_argument('--newest',
-                    default=False,
-                    action="store_true",
-                    help="Only add the latest season.")
-parser.add_argument("-s",
-                    "--shuffle",
-                    action="store_true",
-                    help="Shuffle items once channel is completed.")
+                    help="dizqueTV channel to add playlist to.")
 args = parser.parse_args()
 
 class TraktConnection:
@@ -81,26 +73,9 @@ class Plex:
         self.token = token
         self.server = server.PlexServer(url, token)
 
-    def _get_plex_show_seasons(self, show: video.Show) -> List[video.Season]:
-        seasons = show.seasons()
-        if args.newest:
-            return seasons[-1]
-        return seasons
-
-    def get_plex_show_episodes(self, show: video.Show) -> List[video.Episode]:
-        episodes = []
-        seasons = self._get_plex_show_seasons(show=show)
-        for item in seasons:
-            if type(item) == video.Season:
-                for episode in item:
-                    episodes.append(episode)
-            else:
-                episodes.append(item)
-        return episodes
-
-    def get_plex_show(self, show_name: str, year: int = None, section_name = None) -> Union[video.Show, None]:
+    def get_plex_movie(self, movie_name: str, year: int = None, section_name = None) -> Union[video.Movie, None]:
         search_kwargs = {
-            'title': show_name
+            'title': movie_name
         }
         if year:
             search_kwargs['year'] = year
@@ -109,7 +84,7 @@ class Plex:
         else:
             results = self.server.library.search(**search_kwargs)
         for result in results:
-            if type(result) == video.Show and result.title == show_name:
+            if type(result) == video.Movie and result.title == movie_name:
                 return result
         return None
 
@@ -140,27 +115,19 @@ if not this_channel:
     print("Could not create that channel. Exiting...")
     exit(1)
 
-episodes_to_add = []
-trending_shows = trakt.get_trending_shows()
-for trakt_show in trending_shows:
-    print(f"Searching for {trakt_show.get('title')} on Plex...")
-    matching_plex_show = plex.get_plex_show(show_name=trakt_show.get('title'))
-    if not matching_plex_show:
-        print(f"Could not find {trakt_show.get('title')} on Plex.")
+movies_to_add = []
+trending_movies = trakt.get_trending_movies()
+for trakt_movie in trending_movies:
+    print(f"Searching for {trakt_movie.get('title')} on Plex...")
+    matching_plex_movie = plex.get_plex_movie(movie_name=trakt_movie.get('title'), year=trakt_movie.get('year'))
+    if not matching_plex_movie:
+        print(f"Could not find {trakt_movie.get('title')} on Plex.")
     else:
-        print(f"Found {matching_plex_show.title} on Plex. Gathering episodes...")
-        episodes = plex.get_plex_show_episodes(show=matching_plex_show)
-        if not episodes:
-            print(f"Could not get episodes of {matching_plex_show.title} from Plex.")
-        else:
-            print(f"Adding {len(episodes)} episodes of {matching_plex_show.title} to dizqueTV...")
-            for episode in episodes:
-                dizquetv_episode = dtv.convert_plex_item_to_program(plex_item=episode, plex_server=plex.server)
-                if dizquetv_episode:
-                    episodes_to_add.append(dizquetv_episode)
+        print(f"Found {matching_plex_movie.title} on Plex. Adding to dizqueTV...")
+        dizquetv_movie = dtv.convert_plex_item_to_program(plex_item=matching_plex_movie, plex_server=plex.server)
+        if dizquetv_movie:
+            movies_to_add.append(dizquetv_movie)
 
 if this_channel.delete_all_programs():
-    if this_channel.add_programs(programs=episodes_to_add):
-        if args.shuffle:
-            this_channel.sort_programs_randomly()
+    if this_channel.add_programs(programs=movies_to_add):
         print("Complete!")
