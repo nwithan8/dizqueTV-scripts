@@ -14,7 +14,7 @@ from plexapi import server
 
 
 # Complete this function
-def get_items(args) -> list:
+def get_items(args: argparse.Namespace) -> list:
     """
     Get all items matching the given parameters.
     :return: List of Plex items
@@ -32,7 +32,7 @@ def get_items(args) -> list:
 
 
 # Complete this function
-def get_channel_name(args) -> str:
+def get_channel_name(args: argparse.Namespace) -> str:
     """
     Get the name of the channel to create.
     :return: Channel name
@@ -41,7 +41,9 @@ def get_channel_name(args) -> str:
 
 
 # Add any additional arguments you need
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(
+    description="Create a dizqueTV channel for a particular movie studio, TV network or streaming platform."
+)
 parser.add_argument('studio',
                     nargs="+",
                     type=str,
@@ -63,51 +65,56 @@ dtv = API(url=args.dizquetv_url, verbose=args.verbose)
 
 plex_server = server.PlexServer(args.plex_url, args.plex_token)
 
-# Get all items matching the given parameters
-matching_items = get_items(args)
-if not matching_items:
-    print("No matching items found.")
-    exit(0)
 
-# Clean up the list of items
-matching_items = list(set(matching_items))  # remove duplicate items
+def main(args: argparse.Namespace) -> None:
+    # Get all items matching the given parameters
+    matching_items = get_items(args)
+    if not matching_items:
+        print("No matching items found.")
+        exit(0)
 
-# Verify that the user wants to proceed
-answer = input(f"Found {len(matching_items)} matching items. Proceed with making this channel? [y/n] ")
-if type(answer) != str or not answer.lower().startswith('y'):
-    exit(0)
+    # Clean up the list of items
+    matching_items = list(set(matching_items))  # remove duplicate items
 
-# Copy the items to a dizqueTV channel
-new_channel_number = args.channel_number
-channel_name = get_channel_name(args)
-final_programs = []
-for item in matching_items:
-    if item.type == 'movie':
-        final_programs.append(item)
-    elif item.type == 'show':
-        print(f"Grabbing episodes of {item.title}...")
-        for episode in item.episodes():
-            if (hasattr(episode, "originallyAvailableAt") and episode.originallyAvailableAt) and \
-                    (hasattr(episode, "duration") and episode.duration):
-                final_programs.append(episode)
+    # Verify that the user wants to proceed
+    answer = input(f"Found {len(matching_items)} matching items. Proceed with making this channel? [y/n] ")
+    if type(answer) != str or not answer.lower().startswith('y'):
+        exit(0)
 
-if new_channel_number in dtv.channel_numbers:
-    channel = dtv.get_channel(channel_number=new_channel_number)
-    channel.add_programs(programs=final_programs, plex_server=plex_server)
-else:
-    channel = dtv.add_channel(programs=final_programs,
-                              plex_server=plex_server,
-                              number=new_channel_number,
-                              name=f"{channel_name}",
-                              handle_errors=True)
+    # Copy the items to a dizqueTV channel
+    new_channel_number = args.channel_number
+    channel_name = get_channel_name(args)
+    final_programs = []
+    for item in matching_items:
+        if item.type == 'movie':
+            final_programs.append(item)
+        elif item.type == 'show':
+            print(f"Grabbing episodes of {item.title}...")
+            for episode in item.episodes():
+                if (hasattr(episode, "originallyAvailableAt") and episode.originallyAvailableAt) and \
+                        (hasattr(episode, "duration") and episode.duration):
+                    final_programs.append(episode)
 
-if not channel:
-    print("Failed to update channel.")
-    exit(1)
+    if new_channel_number in dtv.channel_numbers:
+        channel = dtv.get_channel(channel_number=new_channel_number)
+        channel.add_programs(programs=final_programs, plex_server=plex_server)
+    else:
+        channel = dtv.add_channel(programs=final_programs,
+                                  plex_server=plex_server,
+                                  number=new_channel_number,
+                                  name=f"{channel_name}",
+                                  handle_errors=True)
 
-print(f"Channel {new_channel_number} '{channel_name}' successfully updated.")
+    if not channel:
+        print("Failed to update channel.")
+        exit(1)
 
-# Shuffle the channel if requested
-if args.shuffle:
-    print("Shuffling channel items...")
-    channel.sort_programs_randomly()
+    print(f"Channel {new_channel_number} '{channel_name}' successfully updated.")
+
+    # Shuffle the channel if requested
+    if args.shuffle:
+        print("Shuffling channel items...")
+        channel.sort_programs_randomly()
+
+
+main(args=args)

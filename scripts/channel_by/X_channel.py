@@ -1,11 +1,9 @@
 """
-Create a dizqueTV channel with Plex content that has a specific keyword in its description.
-
-The resulting videos (in the media section parameter) will be compiled
-into a single dizqueTV channel.  The channel number & name are also
-parameters, but the next higher channel number will be used if the
-given input is not available.
+Make a dizqueTV channel with all items from a Plex library with a specific filter.
+Grabs all items from your Plex library associated with that filter.
+Creates a dizqueTV channel with all the items.
 """
+
 import argparse
 
 from dizqueTV import API
@@ -19,10 +17,7 @@ def get_items(args: argparse.Namespace) -> list:
     :return: List of Plex items
     """
     items = []
-    for section in args.sections:
-        for keyword in args.keywords:
-            print(f'Searching for items with "{keyword}" in "{section}"...')
-            items.extend(plex_server.library.section(section).search(summary__icontains=keyword))
+    # TODO: Fill in this function
     return items
 
 
@@ -32,14 +27,14 @@ def get_channel_name(args: argparse.Namespace) -> str:
     Get the name of the channel to create.
     :return: Channel name
     """
-    return args.channel_name or ", ".join(args.keywords)
+    # TODO: Fill in this function
+    return ""
 
 
 # Add any additional arguments you need
 parser = argparse.ArgumentParser(
-    description="Create a dizqueTV channel with content with a particular keyword in the description."
+    description="Create a dizqueTV channel with all items from a Plex library with a specific filter."
 )
-parser.add_argument("keywords", nargs="*", type=str, help="Keyword to search for in Plex")
 
 # DO NOT EDIT BELOW THIS LINE
 parser.add_argument('-d', '--dizquetv_url', type=str, required=True, help="URL of dizqueTV server")
