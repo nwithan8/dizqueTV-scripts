@@ -20,7 +20,7 @@ def get_items(args: argparse.Namespace) -> list:
     :return: List of Plex items
     """
     items = []
-    for section in args.libraries:
+    for section in args.sections:
         for genre in args.genres:
             print(f"Looking up content in {section} in the {genre} genre...")
             genre_items = plex_server.library.section(section).search(genre=f"{quote(genre)}")
@@ -45,16 +45,13 @@ def get_channel_name(args: argparse.Namespace) -> str:
 parser = argparse.ArgumentParser(
     description="Create a dizqueTV channel for a particular genre."
 )
-parser.add_argument('genres',
-                    nargs="+",
-                    type=str,
-                    help="genres to find items from")
+parser.add_argument('genres', nargs="+", type=str, help="genres to find items from")
+parser.add_argument("-s", '--sections', nargs="+", type=str, required=True, help="Plex media section(s) to use")
 
 # DO NOT EDIT BELOW THIS LINE
 parser.add_argument('-d', '--dizquetv_url', type=str, required=True, help="URL of dizqueTV server")
 parser.add_argument('-p', '--plex_url', type=str, required=True, help="URL of Plex server")
 parser.add_argument("-t", '--plex_token', type=str, required=True, help="Plex server token")
-parser.add_argument("-s", '--sections', nargs="+", type=str, required=True, help="Plex media section(s) to use")
 parser.add_argument("-n", '--channel_name', nargs="?", type=str, help="name of dizqueTV channel to create")
 parser.add_argument("-c", '--channel_number', nargs='?', type=int, default=None,
                     help="dizqueTV channel to add playlist to.")

@@ -40,12 +40,12 @@ parser = argparse.ArgumentParser(
     description="Create a dizqueTV channel with content with a particular keyword in the description."
 )
 parser.add_argument("keywords", nargs="*", type=str, help="Keyword to search for in Plex")
+parser.add_argument("-s", '--sections', nargs="+", type=str, required=True, help="Plex media section(s) to use")
 
 # DO NOT EDIT BELOW THIS LINE
 parser.add_argument('-d', '--dizquetv_url', type=str, required=True, help="URL of dizqueTV server")
 parser.add_argument('-p', '--plex_url', type=str, required=True, help="URL of Plex server")
 parser.add_argument("-t", '--plex_token', type=str, required=True, help="Plex server token")
-parser.add_argument("-s", '--sections', nargs="+", type=str, required=True, help="Plex media section(s) to use")
 parser.add_argument("-n", '--channel_name', nargs="?", type=str, help="name of dizqueTV channel to create")
 parser.add_argument("-c", '--channel_number', nargs='?', type=int, default=None,
                     help="dizqueTV channel to add playlist to.")
