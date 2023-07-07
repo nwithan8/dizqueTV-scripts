@@ -3,11 +3,11 @@ Copy all items from a Plex playlist to an existing dizqueTV channel.
 Refreshes the channel (removes all existing programs, re-adds new items)
 """
 
-from typing import List, Union
 import argparse
+from typing import List, Union
 
-from plexapi import video, audio, server, collection
 from dizqueTV import API
+from plexapi import video, audio, server, collection
 
 # COMPLETE THESE SETTINGS
 DIZQUETV_URL = "http://localhost:8000"
@@ -78,19 +78,20 @@ else:
         new_channel_number = 1
 to_add = []
 if plex_collection:
-    plex_collection_items: List[video.Movie, video.Episode, video.Show, audio.Track, audio.Artist, audio.Album] = plex_collection.items()  # preload to avoid connection closed while looping
+    plex_collection_items: List[
+        video.Movie | video.Episode | video.Show | audio.Track | audio.Artist | audio.Album] = plex_collection.items()  # preload to avoid connection closed while looping
     file_items = []
     for item in plex_collection_items:
         # collect all episodes of a show/season
         if item.type in ['show', 'season']:
-            file_items.append(item.episodes())
+            file_items.extend(item.episodes())
         # collect all tracks of an artist/album
         elif item.type in ['artist', 'album']:
-            file_items.append(item.tracks())
+            file_items.extend(item.tracks())
         # add movies and clips directly
         else:
             file_items.append(item)
-    for item in file_items: # Movie, Episode and Track objects
+    for item in file_items:  # Movie, Episode and Track objects
         item = dtv.convert_plex_item_to_program(plex_item=item,
                                                 plex_server=plex.server)
         if item:
