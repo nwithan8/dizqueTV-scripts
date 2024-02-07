@@ -18,7 +18,8 @@ Use `python <script_name> --help` to see the script's help message.
 - [`make_blank_channels.py`](scripts/utilities/make_blank_channels.py): Create multiple "blank" channels on dizqueTV.
 - [`delete_channels.py`](scripts/utilities/delete_channels.py): Delete multiple channels on dizqueTV.
 - [`find_broken_links.py`](scripts/utilities/find_broken_links.py): Find broken media links in dizqueTV channels (content path that has changed or no longer exists).
-- [`replace_old_url.py`](scripts/utilities/replace_old_url.py): Replace old URLs in dizqueTV channels with new URLs.
+- [`fix_broken_paths.py`](scripts/utilities/fix_broken_paths.py): Fix broken media links in dizqueTV channels (update file paths in case they have changed).
+- [`replace_old_image_url.py`](scripts/utilities/replace_old_image_url.py): Replace old URLs in dizqueTV channels with new URLs.
 - [`trending_shows.py`](scripts/trending/trending_shows.py): Search for and add the top 10 trending shows (via Trakt) to a dizqueTV channel.
 - [`trending_movies.py`](scripts/trending/trending_movies.py): Search for and add the top 10 trending movies (via Trakt) to a dizqueTV channel.
 - [`studio_channel.py`](scripts/channel_by/studio_channel.py): Make a new channel with all content from specific movie studio, TV network or streaming platform(s).
