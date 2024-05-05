@@ -56,4 +56,4 @@ for program in channel.programs:
 
 print(f"Found {len(broken_programs)} broken programs in channel #{args.channel_number}")
 for program in broken_programs:
-    print(f"{program.title}")
+    print(f"{program.full_name}")

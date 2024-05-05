@@ -68,4 +68,4 @@ if fixed_programs:
 if unfixed_programs:
     print(f"Could not update {len(unfixed_programs)} broken programs in channel #{args.channel_number}")
     for program in unfixed_programs:
-        print(f"{program.title}")
+        print(f"{program.full_name}")

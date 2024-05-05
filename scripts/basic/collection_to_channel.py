@@ -101,7 +101,7 @@ if plex_collection:
                                           name=plex_collection.title,
                                           number=new_channel_number)
                 first_needed = False
-            print(f"Adding {item.title}...")
+            print(f"Adding {item.full_name}...")
             to_add.append(item)
     if channel.delete_all_programs():
         dtv.add_programs_to_channels(programs=to_add,
