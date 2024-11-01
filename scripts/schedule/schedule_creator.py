@@ -49,24 +49,24 @@ SCHEDULE = {  # use 24-hour time
 
 # DO NOT TOUCH BELOW
 
-def get_items_of_type(item_type: str, program_list):
+def get_items_of_type(item_type: str, program_list: List) -> List:
     return [item for item in program_list if
             (helpers._object_has_attribute(obj=item, attribute_name='type') and item.type == item_type)]
 
 
-def get_non(item_type: str, program_list):
+def get_non(item_type: str, program_list: List) -> List:
     return [item for item in program_list if
             (helpers._object_has_attribute(obj=item, attribute_name='type') and item.type != item_type)]
 
 
-def get_random_item_of_type(media_type: str, program_list):
+def get_random_item_of_type(media_type: str, program_list: List) -> object:
     filtered_program_list = get_items_of_type(item_type=media_type, program_list=program_list)
     if not filtered_program_list:
         return None
     return helpers.random_choice(items=filtered_program_list)
 
 
-def get_show_episodes(show_title: str, program_list):
+def get_show_episodes(show_title: str, program_list: List) -> List:
     episodes = []
     for program in program_list:
         if program.showTitle == show_title:
@@ -74,7 +74,7 @@ def get_show_episodes(show_title: str, program_list):
     return episodes
 
 
-def get_program(program_name, program_list):
+def get_program(program_name: str, program_list: List) -> Union[object, None]:
     for program in program_list:
         if program.showTitle == program_name:
             return program
@@ -86,18 +86,28 @@ def create_time_slots(channel: Channel):
     time_slots = []
     for start_time, data in SCHEDULE.items():
         program = None
-        if not data.get('type'):
+
+        media_type = data.get('type', None)
+        if not media_type:
             raise Exception("Must include 'type' in each schedule entry.")
-        if data['type'] == 'show':
-            if data.get('title'):
-                titles = data['title']
-                if not type(data['title']) == List:
-                    titles = [titles]
+
+        media_title = data.get('title', None)
+
+        if media_type == 'show':
+            titles = media_title
+            if not titles:
+                print("Getting random episode of a random show...")
+                program = get_random_item_of_type(media_type='episode', program_list=channel_programs)
+            else:
+                if not type(titles) == list:
+                    raise Exception("'title' must be a list of show titles.")
+
                 shows = []
                 for show_title in titles:
                     episodes = get_show_episodes(show_title=show_title, program_list=channel_programs)
                     if episodes:
-                        shows.append(episodes)
+                        shows.append(episodes)  # Yes, append. Need a list of lists for random_choice to work below
+
                 if not shows:
                     print(f"Could not get any episodes to select for {start_time}.")
                 else:
@@ -107,17 +117,17 @@ def create_time_slots(channel: Channel):
                     selected_show_episodes = helpers.random_choice(items=shows)
                     print(f"Getting random episode of {selected_show_episodes[0].showTitle}...")
                     program = helpers.random_choice(items=selected_show_episodes)
-            else:
-                print("Getting random episode of a random show...")
-                program = get_random_item_of_type(media_type='episode', program_list=channel_programs)
-        elif data['type'] == 'movie':
-            if data.get('title'):
-                program = get_program(program_name=data['title'], program_list=channel_programs)
-            else:
+
+        elif media_type == 'movie':
+            if not media_title:
                 print("Getting random movie...")
                 program = get_random_item_of_type(media_type='movie', program_list=channel_programs)
+            else:
+                program = get_program(program_name=media_title, program_list=channel_programs)
+
         else:
             raise Exception("Type is not 'show' or 'movie'.")
+
         if not program:
             print(f"Could not get a program to schedule for {start_time}.")
         else:
