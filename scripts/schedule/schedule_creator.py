@@ -147,6 +147,8 @@ if not channel:
 if channel.schedule:
     channel.delete_schedule()
 time_slots = create_time_slots(channel=channel)
+if not time_slots:
+    raise Exception("No valid time slots to schedule.")
 if channel.add_schedule(time_slots=time_slots, slots=[]):
     print(f"Created schedule for {channel.name}.")
 else:
